@@ -1,15 +1,11 @@
-# tree container
-from shared_tree import traverse_preorder
+from tree_util import *
 
-traverse = traverse_preorder
 
 def create():
     return None
 
 
 def create_node(value, left=None, right=None):
-    # return (value, left, right)
-    # allow mutable structure
     return [value, left, right]
 
 

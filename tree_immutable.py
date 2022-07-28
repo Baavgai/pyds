@@ -1,7 +1,5 @@
-# tree container
-from shared_tree import traverse_preorder
-
-traverse = traverse_preorder
+# from tree_util import height, is_balanced, traverse_ordered as traverse
+from tree_util import *
 
 def create():
     return None
