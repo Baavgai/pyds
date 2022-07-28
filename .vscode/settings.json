@@ -1,0 +1,9 @@
+{
+    "python.linting.pylintEnabled": false,
+    "editor.detectIndentation": false,
+    "python.linting.pycodestyleEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.pycodestyleArgs": [
+        "--ignore=E501" 
+    ]    
+}
