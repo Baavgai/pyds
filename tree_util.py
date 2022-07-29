@@ -37,3 +37,31 @@ def traverse_ordered(tree):
         yield from traverse_ordered(right)
 
 traverse = traverse_ordered
+
+def tree_info_dump(tree):
+    def loop(node, pos):
+        if node is not None:
+            (value, left, right) = node
+            yield from loop(left, pos + '0')
+            yield (value, len(pos), int(pos, 2))
+            yield from loop(right, pos + '1')
+    for x in sorted(loop(tree, '0'), key=lambda x: x[1]):
+        print(x)
+    h = height(tree)
+    print('height', h)
+    print('foot size', 1 << h)
+
+def tree_to_text(tree):
+    def loop(node, pos):
+        if node is not None:
+            (value, left, right) = node
+            yield from loop(left, pos + '0')
+            yield (value, len(pos) - 1, int(pos, 2))
+            yield from loop(right, pos + '1')
+    h = height(tree)
+    cols = 1 << h
+    a = [[0 for i in range(cols)] for j in range(h)]
+    for (value, row, col) in loop(tree, '0'):
+        a[row][col] = value
+    for x in a:
+        print(x)
