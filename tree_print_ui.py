@@ -1,75 +1,49 @@
-import turtle as screen
+import tkinter as tk
 
-node_size = 18
-font_size = 10
+bg_color = 'black'
+fg_color = 'green'
+node_color = 'white'
 
-def reset_pos(p):
-    screen.pu()
-    screen.setpos(p)
-    screen.setheading(0)
+def draw_node(canvas, center, size, value):
+    h_size = size // 2
+    cx, cy = center
+    x1, x2 = cx - h_size, cx + h_size
+    y1, y2 = cy - h_size, cy + h_size
+    canvas.create_oval(x1, y1, x2, y2, fill=node_color, outline=fg_color, width=3)
+    canvas.create_text(cx, cy, text=value, fill=fg_color, font=('Arial', h_size // 2, 'normal') )
 
-def draw_tree(tree):
-    def down_node(width):
-        screen.pu()
-        screen.setheading(90)
-        screen.fd(node_size)
-
-        (x,y) = screen.pos()
-        screen.pd()
-        screen.setpos((x + width, y - (node_size * 3)))
-        
-        screen.pu()
-        screen.setheading(270)
-        screen.fd(node_size)
-
-    def draw_node(value, pos):
-        reset_pos(pos)
-        screen.pd()
-        screen.begin_fill()
-        screen.circle(node_size)
-        screen.end_fill()
-        screen.pu()
-        screen.setheading(90)
-        screen.fd(node_size // 2)
-        screen.pd()
-        screen.write(value, align='center', font=('Arial', font_size, 'normal'))
-        screen.pu()
+def draw_edge(canvas, p1, p2):
+    x1, y1 = p1
+    x2, y2 = p2
+    canvas.create_line(x1, y1, x2, y2, fill=fg_color, width=1)
     
 
-    def loop(node, width):
-        (value, left, right) = node
-        p = screen.pos()
-        w2 = max(width // 2, node_size)
-        
-        if left is not None:
-            down_node(-width)
-            loop(left, w2)
-        if right is not None:
-            reset_pos(p)
-            down_node(width)
-            loop(right, w2)
-        draw_node(value, p)
-
-    (w, _) = screen.screensize()
-    loop(tree, w)
-
-def tree_to_screen(tree):
-    print(tree, tree)
-    screen.bgcolor("black")
-    screen.color("green")
-    screen.fillcolor("white")
-    screen.speed(0)
-    screen.hideturtle()
-    screen.width(3)
-    (_, h) = screen.screensize()
-    screen.pu()
-    screen.setpos((0, h))
-    draw_tree(tree)
-    screen.mainloop()
-
-import tree_immutable as provider
-from shared import insert_data
-from tests import test_data_u
+def draw_tree(canvas, node_pos, width, node_size, tree, parent = None):
+    if tree is not None:
+        value, left, right = tree
+        px, py = node_pos
+        w2, py2 = width // 2, py + node_size * 2
+        if parent is not None:
+            draw_edge(canvas, parent, node_pos)
+        draw_tree(canvas, (px - w2, py2), w2, node_size, left, node_pos)
+        draw_tree(canvas, (px + w2, py2), w2, node_size, right, node_pos)
+        draw_node(canvas, node_pos, node_size, value)
 
 
-tree_to_screen(insert_data(provider, test_data_u(40)))
+def tree_to_screen(tree, width = 1200, height = 800, node_size = 30, title = 'Tree Viewer'):
+    root = tk.Tk()
+    root.title(title)
+    canvas = tk.Canvas(root, bg=bg_color, width=width, height=height)
+    canvas.pack()
+    
+    start = (width // 2, node_size * 2)
+    draw_tree(canvas, start, width // 2, node_size, tree)
+    root.mainloop()
+
+if __name__ == "__main__":
+    # import tree_util as util
+    import tree_immutable as provider
+    from shared import insert_data
+    from tests import test_data_u
+
+    tree_to_screen(insert_data(provider, test_data_u(40)))
